@@ -9,6 +9,8 @@ namespace WalksProjectAPI.Helpers
         public AutoMapperProfile() 
         {
             CreateMap<Region, RegionDto>().ReverseMap();
+            CreateMap<AddRegionRequestDto, RegionDto>().ReverseMap();
+
         }
     }
 }
