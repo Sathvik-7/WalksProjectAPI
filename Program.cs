@@ -4,6 +4,7 @@ using DemoProjectAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WalksProjectAPI.Helpers;
+using WalksProjectAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddDbContext<WalksDbContext>(options =>
 
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
+builder.Services.AddScoped<IWalksRepository, SQLWalksRepository>();
 
 
 var app = builder.Build();

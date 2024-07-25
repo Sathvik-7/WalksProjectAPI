@@ -76,7 +76,6 @@ namespace DemoProjectAPI.Controllers
             return Ok(_mapper.Map<RegionDto>(regionDomain));//AutoMapper
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
@@ -115,7 +114,6 @@ namespace DemoProjectAPI.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
         }
-
 
         [HttpPut]
         [Route("{id:guid}")]
