@@ -13,6 +13,5 @@ namespace WalksProjectAPI.Repositories
         Task<Walks?> DeleteAsync(Guid id);
 
         Task<Walks> CreateAsync(Walks walks);
-        Task UpdateAsync(Guid id, Region walk);
     }
 }

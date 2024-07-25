@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WalksProjectAPI.Repositories
 {
-    public class SQLWalksRepository:IWalksRepository
+    public class SQLWalksRepository : IWalksRepository
     {
         private readonly WalksDbContext _dbContext;
         public SQLWalksRepository(WalksDbContext _dbContext)
