@@ -42,9 +42,8 @@ namespace DemoProjectAPI.Controllers
             //    });
             //}
             #endregion
-
-            //return AutoMapper
-            return Ok(_mapper.Map<List<RegionDto>>(regions));
+            
+            return Ok(_mapper.Map<List<RegionDto>>(regions));//return AutoMapper
         }
 
         [HttpGet]
@@ -53,6 +52,7 @@ namespace DemoProjectAPI.Controllers
         {
             //var region = _context.Regions.Find(id);
             var regionDomain = await _regionRepository.GetByIdAsync(id);
+            
             //await _context.Regions.FirstOrDefaultAsync(x => x.Id == id);
             if (regionDomain == null)
             {
@@ -72,9 +72,8 @@ namespace DemoProjectAPI.Controllers
 
             //}
             #endregion
-            //AutoMapper
-            return Ok(_mapper.Map<RegionDto>(regionDomain));
-
+            
+            return Ok(_mapper.Map<RegionDto>(regionDomain));//AutoMapper
         }
 
 
