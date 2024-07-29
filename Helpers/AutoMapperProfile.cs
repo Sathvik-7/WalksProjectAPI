@@ -17,6 +17,7 @@ namespace WalksProjectAPI.Helpers
             #region Walks DTO
             CreateMap<AddWalksRequestDto, Walks>().ReverseMap();
             CreateMap<Walks,WalksDto>().ReverseMap();
+            CreateMap<UpdateWalksRequestDto, Walks>().ReverseMap();
             #endregion
         }
     }
