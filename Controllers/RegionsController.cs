@@ -5,6 +5,7 @@ using DemoProjectAPI.Models.DTO;
 using DemoProjectAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WalksProjectAPI.CustomFilters;
 
 namespace DemoProjectAPI.Controllers
 {
@@ -42,7 +43,7 @@ namespace DemoProjectAPI.Controllers
             //    });
             //}
             #endregion
-            
+
             return Ok(_mapper.Map<List<RegionDto>>(regions));//return AutoMapper
         }
 
@@ -52,7 +53,7 @@ namespace DemoProjectAPI.Controllers
         {
             //var region = _context.Regions.Find(id);
             var regionDomain = await _regionRepository.GetByIdAsync(id);
-            
+
             //await _context.Regions.FirstOrDefaultAsync(x => x.Id == id);
             if (regionDomain == null)
             {
@@ -72,11 +73,12 @@ namespace DemoProjectAPI.Controllers
 
             //}
             #endregion
-            
+
             return Ok(_mapper.Map<RegionDto>(regionDomain));//AutoMapper
         }
 
         [HttpPost]
+        [ValidationState]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             #region Map or Convert DTO to Domain Model
@@ -103,26 +105,38 @@ namespace DemoProjectAPI.Controllers
             //};
             #endregion
 
-            //After adding validations to tthe Model properties which are applied on AddRegionRequestDTO
-            if (ModelState.IsValid)
-            {
-                //AutoMapper
-                var regionModel = _mapper.Map<Region>(addRegionRequestDto);
-                //repository folder reference
-                await _regionRepository.CreateAsync(regionModel);
-                //Automapper
-                var regionDto = _mapper.Map<RegionDto>(regionModel);
+            #region After adding validations to tthe Model properties which are applied on AddRegionRequestDTO
+            //if (ModelState.IsValid)
+            //{
+            //    //AutoMapper
+            //    var regionModel = _mapper.Map<Region>(addRegionRequestDto);
+            //    //repository folder reference
+            //    await _regionRepository.CreateAsync(regionModel);
+            //    //Automapper
+            //    var regionDto = _mapper.Map<RegionDto>(regionModel);
 
-                return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
+            //    return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+            //}
+            //else
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            #endregion
+
+            //AutoMapper
+            var regionModel = _mapper.Map<Region>(addRegionRequestDto);
+            //repository folder reference
+            await _regionRepository.CreateAsync(regionModel);
+            //Automapper
+            var regionDto = _mapper.Map<RegionDto>(regionModel);
+
+            return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+
         }
 
         [HttpPut]
         [Route("{id:guid}")]
+        [ValidationState]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             #region Map the DTO to Domain Model
@@ -133,7 +147,7 @@ namespace DemoProjectAPI.Controllers
             //    Name = updateRegionRequestDto.Name
             //};
             #endregion
-          
+
             #region Map the DTO to Domain Model
             //regionDomainModel.Code = updateRegionRequestDto.Code;
             //regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
@@ -150,20 +164,30 @@ namespace DemoProjectAPI.Controllers
             //};
             #endregion
 
-            //Inorder to check the validations which are applied on UpdateRegionRequestDTO
-            if(ModelState.IsValid)
-            {
-                var region = _mapper.Map<Region>(updateRegionRequestDto);
+            #region Inorder to check the validations which are applied on UpdateRegionRequestDTO
+            //if (ModelState.IsValid)
+            //{
+            //    var region = _mapper.Map<Region>(updateRegionRequestDto);
 
-                var regionDomainModel = await _regionRepository.UpdateAsync(id, region);
+            //    var regionDomainModel = await _regionRepository.UpdateAsync(id, region);
 
-                if (regionDomainModel == null)
-                    return NotFound();
+            //    if (regionDomainModel == null)
+            //        return NotFound();
 
-                return Ok(_mapper.Map<RegionDto>(regionDomainModel));
-            }
-            else
-            {  return BadRequest(ModelState); }
+            //    return Ok(_mapper.Map<RegionDto>(regionDomainModel));
+            //}
+            //else
+            //{ return BadRequest(ModelState); }
+            #endregion
+            
+            var region = _mapper.Map<Region>(updateRegionRequestDto);
+
+            var regionDomainModel = await _regionRepository.UpdateAsync(id, region);
+
+            if (regionDomainModel == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<RegionDto>(regionDomainModel));
         }
 
         [HttpDelete]
