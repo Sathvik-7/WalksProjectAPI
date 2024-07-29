@@ -88,16 +88,10 @@ namespace DemoProjectAPI.Controllers
             //};
             #endregion
 
-            //AutoMapper
-            var regionModel = _mapper.Map<Region>(addRegionRequestDto);
-
             #region Use Domain Model and Store the data
             //await _context.Regions.AddAsync(regionModel);
             //await _context.SaveChangesAsync();
             #endregion
-
-            //repository folder reference
-            await _regionRepository.CreateAsync(regionModel);
 
             #region Map or Convert DTO to Domain Model
             //var regionDto = new RegionDto()
@@ -109,10 +103,22 @@ namespace DemoProjectAPI.Controllers
             //};
             #endregion
 
-            //Automapper
-            var regionDto = _mapper.Map<RegionDto>(regionModel);
+            //After adding validations to tthe Model properties which are applied on AddRegionRequestDTO
+            if (ModelState.IsValid)
+            {
+                //AutoMapper
+                var regionModel = _mapper.Map<Region>(addRegionRequestDto);
+                //repository folder reference
+                await _regionRepository.CreateAsync(regionModel);
+                //Automapper
+                var regionDto = _mapper.Map<RegionDto>(regionModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+                return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpPut]
@@ -127,15 +133,7 @@ namespace DemoProjectAPI.Controllers
             //    Name = updateRegionRequestDto.Name
             //};
             #endregion
-
-            var region = _mapper.Map<Region>(updateRegionRequestDto);
-
-            var regionDomainModel = await _regionRepository.UpdateAsync(id, region);
-            
-            // _context.Regions.FindAsync(id);
-            if (regionDomainModel == null)
-                return NotFound();
-
+          
             #region Map the DTO to Domain Model
             //regionDomainModel.Code = updateRegionRequestDto.Code;
             //regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
@@ -152,7 +150,20 @@ namespace DemoProjectAPI.Controllers
             //};
             #endregion
 
-            return Ok(_mapper.Map<RegionDto>(regionDomainModel));
+            //Inorder to check the validations which are applied on UpdateRegionRequestDTO
+            if(ModelState.IsValid)
+            {
+                var region = _mapper.Map<Region>(updateRegionRequestDto);
+
+                var regionDomainModel = await _regionRepository.UpdateAsync(id, region);
+
+                if (regionDomainModel == null)
+                    return NotFound();
+
+                return Ok(_mapper.Map<RegionDto>(regionDomainModel));
+            }
+            else
+            {  return BadRequest(ModelState); }
         }
 
         [HttpDelete]

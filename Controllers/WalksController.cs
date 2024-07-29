@@ -24,9 +24,16 @@ namespace WalksProjectAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddWalksRequestDto addWalksRequestDto)
         {
-            var walksDomainModel = _mapper.Map<Walks>(addWalksRequestDto);
-            await _walkrepository.CreateAsync(walksDomainModel);
-            return Ok(_mapper.Map<Walks>(walksDomainModel));
+            if (ModelState.IsValid)
+            {
+                var walksDomainModel = _mapper.Map<Walks>(addWalksRequestDto);
+                await _walkrepository.CreateAsync(walksDomainModel);
+                return Ok(_mapper.Map<Walks>(walksDomainModel));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
         
         [HttpGet]
@@ -54,14 +61,21 @@ namespace WalksProjectAPI.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalksRequestDto updateWalksRequestDto)
         {
-            var walk = _mapper.Map<Walks>(updateWalksRequestDto);
+            if (ModelState.IsValid)
+            {
+                var walk = _mapper.Map<Walks>(updateWalksRequestDto);
 
-            var walkDomainModel = await _walkrepository.UpdateAsync(id, walk);
+                var walkDomainModel = await _walkrepository.UpdateAsync(id, walk);
 
-            if (walkDomainModel == null)
-                return NotFound();
+                if (walkDomainModel == null)
+                    return NotFound();
 
-            return Ok(_mapper.Map<WalksDto>(walkDomainModel));
+                return Ok(_mapper.Map<WalksDto>(walkDomainModel));
+            }
+            else 
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpDelete]
