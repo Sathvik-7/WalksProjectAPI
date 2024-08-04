@@ -1,5 +1,6 @@
 ﻿using DemoProjectAPI.Data;
 using DemoProjectAPI.Models.Domain;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace WalksProjectAPI.Repositories
@@ -12,14 +13,50 @@ namespace WalksProjectAPI.Repositories
             this._dbContext = _dbContext;
         }
         
-        public async Task<List<Walks>> GetAllAsync()
+        public async Task<List<Walks>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, 
+            bool isAscending =true, int pageNumber = 1, int pageSize = 3)
         {
-            return await _dbContext.Walks.ToListAsync();
+            var walks = _dbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();//ToListAsync();
+
+            #region Filter
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+            #endregion
+
+            #region Sorting
+            if (!string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.Name): walks.OrderByDescending(x => x.Name);
+                }
+                else if(sortBy.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.Description) : walks.OrderByDescending(x => x.Description);
+                }
+                else if (sortBy.Equals("LengthInKm", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.LengthInKm) : walks.OrderByDescending(x => x.LengthInKm);
+                }
+            }
+            #endregion
+
+            #region Pagination
+            var skipResults = (pageNumber - 1) * pageSize;
+            #endregion
+
+            return await walks.Skip(skipResults).Take(pageSize).ToListAsync(); 
+            //return await _dbContext.Walks.ToListAsync();
         }
 
         public async Task<Walks?> GetByIdAsync(Guid id)
         {
-            return await _dbContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbContext.Walks.Include("Difficulty").Include("Region").FirstOrDefaultAsync(x=> x.Id == id);
         }
 
         public async Task<Walks> CreateAsync(Walks walk)

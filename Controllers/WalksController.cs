@@ -45,9 +45,13 @@ namespace WalksProjectAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery]string? filterOn, [FromQuery]string? filterQuery,
+            [FromQuery]string? sortBy, [FromQuery]bool? isAscending , [FromQuery] int pageNumber = 1 , 
+            [FromQuery] int pageSize = 3)
         {
-            var walksDomainModel = await _walkrepository.GetAllAsync();
+            var walksDomainModel = await _walkrepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true,
+                pageNumber,pageSize);
+
             return Ok(_mapper.Map<List<Walks>>(walksDomainModel));
         }
 
