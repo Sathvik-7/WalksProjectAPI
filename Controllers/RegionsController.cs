@@ -3,6 +3,7 @@ using DemoProjectAPI.Data;
 using DemoProjectAPI.Models.Domain;
 using DemoProjectAPI.Models.DTO;
 using DemoProjectAPI.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WalksProjectAPI.CustomFilters;
@@ -12,6 +13,7 @@ namespace DemoProjectAPI.Controllers
     //https://localhost:portnumber/api/Regions
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
