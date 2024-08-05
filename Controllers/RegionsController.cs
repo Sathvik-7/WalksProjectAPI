@@ -13,7 +13,7 @@ namespace DemoProjectAPI.Controllers
     //https://localhost:portnumber/api/Regions
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
@@ -26,6 +26,7 @@ namespace DemoProjectAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
             //Get the data from Database - Domain Models
@@ -51,6 +52,7 @@ namespace DemoProjectAPI.Controllers
 
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //var region = _context.Regions.Find(id);
@@ -81,6 +83,7 @@ namespace DemoProjectAPI.Controllers
 
         [HttpPost]
         [ValidationState]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             #region Map or Convert DTO to Domain Model
@@ -139,6 +142,7 @@ namespace DemoProjectAPI.Controllers
         [HttpPut]
         [Route("{id:guid}")]
         [ValidationState]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             #region Map the DTO to Domain Model
@@ -194,6 +198,7 @@ namespace DemoProjectAPI.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var regionDomain = await _regionRepository.DeleteAsync(id);
